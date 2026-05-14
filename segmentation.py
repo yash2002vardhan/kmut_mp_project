@@ -34,7 +34,7 @@ def _particle_mask_raw(hsv: np.ndarray) -> np.ndarray:
     sat_drop = (s < 150) & (v > 200)                        # desaturated + bright (PET)
     bright_spike = v > 230                                   # any very bright pixel
 
-    return ((hue_shift | sat_drop | bright_spike)).astype(np.uint8) * 255
+    return ((hue_shift | sat_drop | bright_spike)).astype(np.uint8) * 255 # True/False -> 1/0 -> 255/0 (OpenCV binary mask)
 
 
 def segment_particles(bgr: np.ndarray, circle_mask: np.ndarray) -> np.ndarray:
@@ -45,7 +45,7 @@ def segment_particles(bgr: np.ndarray, circle_mask: np.ndarray) -> np.ndarray:
     raw = _particle_mask_raw(hsv)
 
     # Apply circle mask
-    particles = cv2.bitwise_and(raw, circle_mask)
+    particles = cv2.bitwise_and(raw, circle_mask) # reduces noise, by ignoring the particles outside the petri dish (the circular mask)
 
     # Light morphological cleanup — only remove obvious salt noise
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))

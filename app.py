@@ -10,13 +10,6 @@ from segmentation import segment_particles
 
 model = load_model()
 
-CLASS_COLORS = {
-    "PET": "#3B82F6",   # blue
-    "PP":  "#22C55E",   # green
-    "PS":  "#06B6D4",   # cyan
-    "PVC": "#F59E0B",   # amber
-}
-
 
 def _overlay_particles(bgr: np.ndarray, particle_mask: np.ndarray) -> np.ndarray:
     """Return RGB image with detected particles highlighted in red."""
@@ -65,22 +58,6 @@ with gr.Blocks(title="Microplastics Classifier") as demo:
         fn=classify,
         inputs=input_image,
         outputs=[predicted_label, prob_output, overlay_output],
-    )
-
-    gr.Examples(
-        examples=[
-            [str(p)] for p in [
-                Path("/Users/yashvardhan/Downloads/HSV Dataset/Test/PET") / sorted(
-                    Path("/Users/yashvardhan/Downloads/HSV Dataset/Test/PET").iterdir())[0].name,
-                Path("/Users/yashvardhan/Downloads/HSV Dataset/Test/PP") / sorted(
-                    Path("/Users/yashvardhan/Downloads/HSV Dataset/Test/PP").iterdir())[0].name,
-                Path("/Users/yashvardhan/Downloads/HSV Dataset/Test/PS") / sorted(
-                    Path("/Users/yashvardhan/Downloads/HSV Dataset/Test/PS").iterdir())[0].name,
-                Path("/Users/yashvardhan/Downloads/HSV Dataset/Test/PVC") / sorted(
-                    Path("/Users/yashvardhan/Downloads/HSV Dataset/Test/PVC").iterdir())[0].name,
-            ]
-        ],
-        inputs=input_image,
     )
 
 

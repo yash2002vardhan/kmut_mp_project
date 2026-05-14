@@ -28,18 +28,18 @@ def detect_circle_mask(img: np.ndarray) -> tuple[np.ndarray, tuple[int, int, int
         blurred,
         cv2.HOUGH_GRADIENT,
         dp=1.2,
-        minDist=min(h, w) // 2,
-        param1=50,
-        param2=30,
+        minDist=min(h, w) // 2, # Minimum distance between detected circles
+        param1=50, # Gradient threshold for edge detection
+        param2=30, # Accumulator threshold for circle detection
         minRadius=min(h, w) // 4,
-        maxRadius=min(h, w) // 2,
+        maxRadius=min(h, w) // 2, # Maximum radius of circles to detect
     )
 
     if circles is not None:
         cx, cy, r = np.round(circles[0, 0]).astype(int)
     else:
         cx, cy = w // 2, h // 2
-        r = int(min(h, w) * 0.42)
+        r = int(min(h, w) * 0.42) # 0.42 is just a tried and tested value based on the images in the dataset
         logger.debug("HoughCircles failed, using fallback circle.")
 
     mask = np.zeros((h, w), dtype=np.uint8)
@@ -50,7 +50,7 @@ def detect_circle_mask(img: np.ndarray) -> tuple[np.ndarray, tuple[int, int, int
 def crop_and_resize(img: np.ndarray, circle_mask: np.ndarray, params: tuple[int, int, int]) -> np.ndarray:
     """Apply circle mask (zero-out corners) and resize to TARGET_SIZE."""
     masked = img.copy()
-    masked[circle_mask == 0] = 0
+    masked[circle_mask == 0] = 0 # outside the petri dish the img will be black, only circular region remains visible
     cx, cy, r = params
     h, w = img.shape[:2]
     x1, y1 = max(0, cx - r), max(0, cy - r)
