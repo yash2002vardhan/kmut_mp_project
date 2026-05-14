@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+
+# Model artifacts
+*.pkl
+*.keras
+*.h5
+
+# Gradio temp files
+/tmp/gradio_*
+gradio_cached_examples/
+flagged/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
