@@ -11,6 +11,12 @@ __pycache__/
 *.keras
 *.h5
 
+# YOLO / Ultralytics
+runs/
+yolo11*.pt
+yolov8*.pt
+datasets/
+
 # Gradio temp files
 /tmp/gradio_*
 gradio_cached_examples/
@@ -22,3 +28,6 @@ flagged/
 # IDE
 .vscode/
 .idea/
+
+# Local dataset config (absolute paths)
+multiclass_detection/data.yaml
