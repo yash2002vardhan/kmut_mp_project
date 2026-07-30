@@ -18,6 +18,10 @@ RUNS_DIR = Path(__file__).parent / "runs"
 # Canonical location; train.py may write to microplastics-2, -3, ... on reruns.
 DEFAULT_WEIGHTS = RUNS_DIR / "microplastics" / "weights" / "best.pt"
 
+# 0.25 is the F1-optimal operating point measured on the test split.
+DEFAULT_CONF = 0.25
+DEFAULT_IMGSZ = 1024  # high res: microplastic particles are small objects
+
 _model_cache: dict[str, YOLO] = {}
 
 
@@ -47,11 +51,22 @@ def load_detector(weights: str | Path | None = None) -> YOLO:
     return _model_cache[key]
 
 
+def predict(
+    image: str | Path | np.ndarray,
+    weights: str | Path | None = None,
+    conf: float = DEFAULT_CONF,
+    imgsz: int = DEFAULT_IMGSZ,
+):
+    """Run the detector on one image and return the raw Ultralytics Result."""
+    model = load_detector(weights)
+    return model.predict(image, imgsz=imgsz, conf=conf, verbose=False)[0]
+
+
 def detect(
     image: str | Path | np.ndarray,
     weights: str | Path | None = None,
-    conf: float = 0.25,
-    imgsz: int = 1024,
+    conf: float = DEFAULT_CONF,
+    imgsz: int = DEFAULT_IMGSZ,
 ) -> tuple[dict, int, np.ndarray]:
     """
     Detect and classify particles in one image.
@@ -61,8 +76,7 @@ def detect(
         total:     total number of detected particles
         annotated: BGR image with boxes + labels drawn (as from Ultralytics plot())
     """
-    model = load_detector(weights)
-    result = model.predict(image, imgsz=imgsz, conf=conf, verbose=False)[0]
+    result = predict(image, weights=weights, conf=conf, imgsz=imgsz)
 
     names = result.names
     counts: dict[str, int] = {}
